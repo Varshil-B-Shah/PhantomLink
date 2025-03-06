@@ -14,7 +14,6 @@ const UserHistory = () => {
   const [highlightedCard, setHighlightedCard] = useState(null);
 
   useEffect(() => {
-    // Simulate fetching data
     setTimeout(() => {
       setUserData({
         "user_id": "12345",
@@ -46,7 +45,6 @@ const UserHistory = () => {
     }, 500);
   }, []);
 
-  // Cycle through highlighting cards for cyberpunk effect
   useEffect(() => {
     if (!userData) return;
     
@@ -54,7 +52,6 @@ const UserHistory = () => {
       const randomIndex = Math.floor(Math.random() * userData.history.length);
       setHighlightedCard(randomIndex);
       
-      // Reset highlight after a short delay
       setTimeout(() => setHighlightedCard(null), 700);
     }, 3000);
     
@@ -116,12 +113,10 @@ const UserHistory = () => {
 
   return (
     <div className="min-h-screen bg-black overflow-hidden text-cyan-300 p-6 relative">
-      {/* Background grid effect */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,200,255,0.1)_0,rgba(0,0,0,0)_70%)]"></div>
       <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0),rgba(0,200,255,0.05),rgba(0,0,0,0))]"></div>
       <div className="absolute inset-0 bg-[linear-gradient(transparent_0%,rgba(0,30,40,0.8)_100%)]"></div>
       
-      {/* Background scanlines */}
       <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,rgba(0,0,0,0.2),rgba(0,0,0,0.2)_1px,transparent_1px,transparent_2px)] opacity-20 pointer-events-none"></div>
       
       <div className="max-w-7xl mx-auto relative z-10">
@@ -194,10 +189,8 @@ const UserHistory = () => {
                   highlightedCard === index ? 'ring-2 ring-cyan-400 shadow-lg shadow-cyan-500/50' : 'shadow-lg shadow-cyan-900/20'
                 }`}
               >
-                {/* Glitch effect overlay */}
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-900/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 
-                {/* Status indicator line */}
                 <div className={`absolute left-0 top-0 w-1 h-full ${
                   item.status === "success" ? "bg-emerald-500/70" : "bg-red-500/70"
                 }`}></div>
@@ -226,7 +219,6 @@ const UserHistory = () => {
                     </Badge>
                   </div>
                   
-                  {/* Animated hover effect */}
                   <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </CardContent>
               </Card>
