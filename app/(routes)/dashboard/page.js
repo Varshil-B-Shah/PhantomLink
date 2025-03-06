@@ -245,27 +245,6 @@ const PhoneMetricsVisualization = () => {
               ${arrowEndX} ${arrowEndY}`;
   };
 
-  const getPathCircles = (component) => {
-    const { arrowStartX, arrowStartY, arrowEndX, arrowEndY } =
-      componentConfig[component];
-
-    const circles = [
-      { cx: (arrowStartX + arrowEndX) / 3, cy: arrowStartY + 20 },
-      { cx: (arrowStartX + arrowEndX) / 2, cy: arrowEndY - 30 },
-    ];
-
-    return circles.map((circle, index) => (
-      <circle
-        key={`circle-${component}-${index}`}
-        cx={circle.cx}
-        cy={circle.cy}
-        r="8"
-        fill="#06B6D4"
-        opacity="0.8"
-      />
-    ));
-  };
-
   const formatTime = (ms) => {
     const seconds = Math.floor(ms / 1000);
     const minutes = Math.floor(seconds / 60);
