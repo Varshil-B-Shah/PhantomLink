@@ -12,7 +12,6 @@ import {
   ChevronRight,
 } from "lucide-react";
 
-// Create Sidebar Context
 const SidebarContext = createContext();
 
 export function useSidebar() {
@@ -60,14 +59,12 @@ export default function DashboardLayout({ children }) {
   return (
     <SidebarContext.Provider value={{ isCollapsed, toggleSidebar }}>
       <div className="flex h-screen bg-black">
-        {/* Sidebar */}
         <div
           className={`fixed top-0 left-0 h-screen transition-all duration-300 ${
             isCollapsed ? "w-16" : "w-64"
           }`}
         >
           <div className="h-full bg-gradient-to-b from-blue-900 via-cyan-800 to-black flex flex-col">
-            {/* Logo and Toggle Area */}
             <div className="px-4 py-6 flex items-center justify-between">
               {!isCollapsed && (
                 <h1 className="text-white text-xl font-bold">Dashboard</h1>
@@ -84,7 +81,6 @@ export default function DashboardLayout({ children }) {
               </button>
             </div>
 
-            {/* Navigation Links */}
             <nav className="flex-1 px-2">
               <ul className="space-y-2">
                 {menuItems.map((item) => {
@@ -117,21 +113,18 @@ export default function DashboardLayout({ children }) {
               </ul>
             </nav>
 
-            {/* Footer Information */}
             <div className="p-4 text-xs text-gray-400">
               {!isCollapsed && <p>© 2025 Dashboard</p>}
             </div>
           </div>
         </div>
 
-        {/* Main Content */}
         <div
           className={`flex-1 transition-all duration-300 ${
             isCollapsed ? "ml-16" : "ml-64"
           }`}
         >
           <div className="relative min-h-screen">
-            {/* User Button */}
             <div className="absolute top-8 right-7 z-50">
               <div className="relative group">
                 <div className="absolute -inset-4 rounded-full bg-cyan-400 opacity-0 group-hover:opacity-40 blur-lg transition-opacity duration-300"></div>
@@ -144,7 +137,6 @@ export default function DashboardLayout({ children }) {
               </div>
             </div>
 
-            {/* Page Content */}
             <div>{children}</div>
           </div>
         </div>

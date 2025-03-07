@@ -1,5 +1,3 @@
-// app/sign-in/page.js
-
 "use client";
 
 import { SignIn } from "@clerk/nextjs";
@@ -9,16 +7,13 @@ export default function SignInPage() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    // Add animation after component mounts
     setLoaded(true);
   }, []);
 
   return (
     <div className="relative flex justify-center items-center min-h-screen w-full overflow-hidden bg-black">
-      {/* Background gradient effect */}
       <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black"></div>
 
-      {/* Animated background patterns */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute w-full h-full">
           {Array(20)
@@ -43,19 +38,16 @@ export default function SignInPage() {
         </div>
       </div>
 
-      {/* Glowing circles */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-700 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
       <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
       <div className="absolute bottom-1/4 right-1/3 w-96 h-96 bg-blue-900 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
 
-      {/* Container for sign-in box */}
       <div
         className={`relative z-10 w-full max-w-md transition-all duration-1000 transform ${
           loaded ? "scale-100 opacity-100" : "scale-90 opacity-0"
         }`}
       >
         <div className="p-8 rounded-xl bg-gray-900/80 backdrop-blur-md border border-gray-800 shadow-2xl">
-          {/* Title section */}
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-600 bg-clip-text text-transparent">
               Welcome Back
@@ -65,12 +57,10 @@ export default function SignInPage() {
             </p>
           </div>
 
-          {/* Custom flame button */}
           <div className="relative flex justify-center mb-6">
             <div className="group relative">
               <div className="absolute -inset-1 rounded-lg bg-gradient-to-r from-cyan-600 to-blue-600 opacity-70 blur group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
 
-              {/* Animated flames container */}
               <div className="absolute -bottom-3 left-0 right-0 flex justify-center">
                 {Array(7)
                   .fill()
@@ -92,7 +82,6 @@ export default function SignInPage() {
                   ))}
               </div>
 
-              {/* Sign In button */}
               <button
                 className="relative inline-flex items-center justify-center w-full px-8 py-3 text-lg font-medium text-white transition-all duration-200 bg-gradient-to-r from-blue-800 to-blue-900 rounded-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-gray-900"
                 onClick={() => {}}
@@ -102,7 +91,6 @@ export default function SignInPage() {
             </div>
           </div>
 
-          {/* Clerk SignIn component */}
           <div className="mt-4">
             <SignIn
               appearance={{
@@ -129,7 +117,6 @@ export default function SignInPage() {
         </div>
       </div>
 
-      {/* CSS animations */}
       <style jsx global>{`
         @keyframes float {
           0% {

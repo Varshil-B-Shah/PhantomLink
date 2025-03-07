@@ -5,6 +5,9 @@ import { Input } from "@/components/ui/input";
 import * as THREE from "three";
 import { gsap } from "gsap";
 import { motion } from "framer-motion";
+import { doc, setDoc, arrayUnion } from "firebase/firestore";
+import { db } from "@/lib/firebaseConfig";
+import { useUser } from "@clerk/nextjs";
 
 const PhantomVoiceInterface = () => {
   const [command, setCommand] = useState("");
@@ -16,6 +19,7 @@ const PhantomVoiceInterface = () => {
   const threeContainerRef = useRef(null);
   const sceneRef = useRef(null);
   const recognitionRef = useRef(null);
+  const { user, isLoaded } = useUser();
 
   useEffect(() => {
     if (!threeContainerRef.current) return;
@@ -292,29 +296,67 @@ const PhantomVoiceInterface = () => {
     setAudioLevel(0);
   };
 
-  const sendCommand = () => {
+  const sendCommand = async () => {
     if (!command.trim()) return;
+    if (!isLoaded || !user) {
+      console.error("User not authenticated or still loading");
+      return;
+    }
 
     const payload = {
       command: command.trim(),
       timestamp: new Date().toISOString(),
+      userId: user.id,
+      email: user.emailAddresses?.[0].emailAddress || "no-email",
+      username: user.username || user.firstName || "Unknown",
     };
 
-    fetch("/api/com", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Response:", data);
-        setCommand("");
-      })
-      .catch((error) => {
-        console.error("Error sending command:", error);
+    try {
+      const response = await fetch("/api/com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
       });
+
+      if (!response.ok) {
+        throw new Error("Failed to send command");
+      }
+
+      const data = await response.json();
+      console.log("Response:", data);
+
+      // Store command and response in Firestore
+      try {
+        // Using Clerk user.id as the document ID
+        const userDocRef = doc(db, "user_history", user.id);
+
+        // Using merge: true to update existing document or create if it doesn't exist
+        await setDoc(
+          userDocRef,
+          {
+            userId: user.id,
+            email: user.emailAddresses?.[0].emailAddress || "no-email",
+            username: user.username || user.firstName || "Unknown",
+            history: arrayUnion({
+              command: command.trim(),
+              timestamp: new Date().toISOString(),
+              tool_name: data.tool_name || null,
+            }),
+          },
+          { merge: true }
+        );
+
+        console.log("Command history saved to Firestore");
+      } catch (firestoreError) {
+        console.error("Error saving to Firestore:", firestoreError);
+      }
+
+      setCommand("");
+    } catch (error) {
+      console.error("Error sending command:", error);
+    }
   };
 
   const sendSOS = () => {
