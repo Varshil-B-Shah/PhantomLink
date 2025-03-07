@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function GET(request) {
   try {
     const response = await fetch(
-      "https://mostly-unbiased-ladybird.ngrok-free.app/metrics"
+      "https://7ef4-2402-3a80-4167-2230-30d8-e783-a7d2-4f9a.ngrok-free.app/metrics"
     );
     if (!response.ok) {
       throw new Error(`External API error: ${response.status}`);
