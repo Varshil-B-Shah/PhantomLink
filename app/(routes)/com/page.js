@@ -228,17 +228,14 @@ const PhantomVoiceInterface = () => {
   };
 
   const startListening = () => {
-    // Initialize speech recognition if not already
     if (!recognitionRef.current) {
       recognitionRef.current = setupSpeechRecognition();
     }
 
-    // Start speech recognition
     if (recognitionRef.current) {
       recognitionRef.current.start();
     }
 
-    // Start audio visualization
     navigator.mediaDevices
       .getUserMedia({ audio: true })
       .then((stream) => {
@@ -280,12 +277,10 @@ const PhantomVoiceInterface = () => {
   };
 
   const stopListening = () => {
-    // Stop speech recognition
     if (recognitionRef.current) {
       recognitionRef.current.stop();
     }
 
-    // Stop microphone stream
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
@@ -317,6 +312,28 @@ const PhantomVoiceInterface = () => {
       })
       .catch((error) => {
         console.error("Error sending command:", error);
+      });
+  };
+
+  const sendSOS = () => {
+    const payload = {
+      command: "SOS",
+      timestamp: new Date().toISOString(),
+    };
+
+    fetch("/api/sos", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("SOS Response:", data);
+      })
+      .catch((error) => {
+        console.error("Error sending SOS:", error);
       });
   };
 
@@ -456,15 +473,22 @@ const PhantomVoiceInterface = () => {
 
               <div className="flex space-x-2">
                 <Button
+                  onClick={sendSOS}
+                  className="bg-black border border-yellow-500 text-yellow-500 hover:text-white hover:bg-yellow-900/30 transition-colors font-mono uppercase tracking-wider px-4 text-xs h-8 animate-pulse"
+                >
+                  SOS
+                </Button>
+
+                <Button
                   onClick={clearCommand}
-                  className="bg-black  border border-red-500 text-red-500 hover:text-white hover:bg-red-900/30 transition-colors font-mono uppercase tracking-wider px-4 text-xs h-8"
+                  className="bg-black border border-red-500 text-red-500 hover:text-white hover:bg-red-900/30 transition-colors font-mono uppercase tracking-wider px-4 text-xs h-8"
                 >
                   CLEAR
                 </Button>
 
                 <Button
                   onClick={sendCommand}
-                  className="bg-black  border border-pink-500 text-pink-500 hover:text-white hover:bg-pink-900/30 transition-colors font-mono uppercase tracking-wider px-4 text-xs h-8"
+                  className="bg-black border border-pink-500 text-pink-500 hover:text-white hover:bg-pink-900/30 transition-colors font-mono uppercase tracking-wider px-4 text-xs h-8"
                   disabled={!command.trim()}
                 >
                   TRANSMIT

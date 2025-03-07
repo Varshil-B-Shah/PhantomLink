@@ -10,40 +10,40 @@ const Metrics = () => {
   const canvasRef = useRef(null);
   const [componentConfig, setComponentConfig] = useState({
     CPU: {
-      x: 79,
-      y: 6,
-      cardX: 70,
-      cardY: 10,
+      x: 66,
+      y: 3,
+      cardX: 57,
+      cardY: 4,
       cardWidth: 22,
       cardHeight: 54,
-      arrowStartX: 1230,
-      arrowStartY: 100,
-      arrowEndX: 370,
+      arrowStartX: 1030,
+      arrowStartY: 55,
+      arrowEndX: 180,
       arrowEndY: 325,
     },
     GPU: {
-      x: 62,
-      y: 32.5,
-      cardX: 53,
-      cardY: 66,
+      x: 50,
+      y: 32,
+      cardX: 41,
+      cardY: 65,
       cardWidth: 21,
       cardHeight: 26,
-      arrowStartX: 955,
-      arrowStartY: 510,
-      arrowEndX: 380,
-      arrowEndY: 350,
+      arrowStartX: 770,
+      arrowStartY: 500,
+      arrowEndX: 200,
+      arrowEndY: 340,
     },
     BAT: {
-      x: 52,
-      y: 12.5,
-      cardX: 43,
-      cardY: 24,
+      x: 40,
+      y: 13.5,
+      cardX: 31,
+      cardY: 26,
       cardWidth: 24,
       cardHeight: 26,
-      arrowStartX: 820,
-      arrowStartY: 200,
-      arrowEndX: 350,
-      arrowEndY: 410,
+      arrowStartX: 620,
+      arrowStartY: 220,
+      arrowEndX: 140,
+      arrowEndY: 390,
     },
   });
 
@@ -465,21 +465,21 @@ const Metrics = () => {
   };
 
   return (
-    <div className="max-h-screen relative right-45 bg-black text-white">
+    <div className="relative bg-transparent text-white">
       <canvas
         ref={canvasRef}
-        className="fixed top-0 left-0 w-full h-full"
+        className="absolute top-0 left-0 w-full h-full"
         style={{ zIndex: 0 }}
       />
 
-      <div className="relative w-full min-h-screen">
+      <div className="relative w-full top-7 min-h-[calc(100vh-40px)]">
         {isClient && metricsData && (
           <>
             <div
               className="absolute"
               style={{
-                left: "400px",
-                top: "50px",
+                left: "205px",
+                top: "43px",
                 width: "300px",
                 height: "600px",
               }}
@@ -547,5 +547,5 @@ const Metrics = () => {
     </div>
   );
 };
- 
+
 export default Metrics;

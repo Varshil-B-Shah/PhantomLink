@@ -109,7 +109,6 @@ const SidebarContent = () => {
             "overflow-x-hidden",
           )}
         >
-          {/* Sidebar Header with Toggle Button */}
           <div className="flex justify-between items-center mb-8 mt-2">
             <h2 className="text-lg font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
               Dashboard
