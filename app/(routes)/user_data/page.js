@@ -469,9 +469,7 @@ const UserHistory = () => {
               </Button>
             </PopoverTrigger>
             <PopoverContent className="bg-black/95 border-cyan-700 text-cyan-300 p-0 backdrop-blur-lg cyber-panel">
-              // Replace the Calendar component with this expanded version:
-              <div className="bg-black/90 p-3 w-64">
-                {/* Month/Year selector */}
+              <div className="bg-black/90 p-3 w-full">
                 <div className="flex justify-between items-center mb-3">
                   <button
                     className="text-cyan-400 hover:text-cyan-300 bg-black/50 border border-cyan-900/50 px-2 py-1 cyber-glitch"
@@ -612,7 +610,7 @@ const UserHistory = () => {
                       );
                     }
 
-                    return days;
+                    return days;  
                   })()}
                 </div>
               </div>

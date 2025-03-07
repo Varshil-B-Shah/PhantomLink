@@ -196,13 +196,13 @@ export default function Landing() {
       <div
         style={{
           transform: `
-            rotate(-19deg) 
+            rotate(-23deg) 
             translateX(${-cameraPosition.x * 100}px) 
             translateY(${-cameraPosition.y * 100}px)
           `,
           position: "absolute",
-          top: "97vh",
-          left: "42.5vw",
+          top: "98vh",
+          left: "37vw",
         }}
         className=""
       >

@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import * as THREE from "three";
 import { gsap } from "gsap";
 import { motion } from "framer-motion";
-import { useInView } from "framer-motion";
 
 const PhantomVoiceInterface = () => {
   const [command, setCommand] = useState("");

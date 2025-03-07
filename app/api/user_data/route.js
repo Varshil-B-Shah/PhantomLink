@@ -1,4 +1,3 @@
-// app/api/metrics/route.js
 import { NextResponse } from "next/server";
 
 export async function GET(request) {
