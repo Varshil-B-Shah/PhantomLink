@@ -34,8 +34,7 @@ const UserHistory = () => {
   const [highlightedItem, setHighlightedItem] = useState(null);
 
   useEffect(() => {
-    // Create style element for the cyberpunk scrollbar
-    const styleElement = document.createElement('style');
+    const styleElement = document.createElement("style");
     styleElement.textContent = `
       /* Cyberpunk Scrollbar Styling */
       .cyber-scrollbar::-webkit-scrollbar {
@@ -135,12 +134,11 @@ const UserHistory = () => {
       }
     `;
     document.head.appendChild(styleElement);
-    
+
     return () => {
       document.head.removeChild(styleElement);
     };
   }, []);
-
 
   useEffect(() => {
     setTimeout(() => {
@@ -304,22 +302,18 @@ const UserHistory = () => {
     }, 500);
   }, []);
 
-  // Update status of parent commands based on child commands
   useEffect(() => {
     if (!userData) return;
 
-    // Check if statuses are already calculated
     const alreadyHasStatus =
       userData.history.length > 0 &&
       userData.history[0].hasOwnProperty("status");
     if (alreadyHasStatus) return;
 
     const updatedHistory = userData.history.map((item) => {
-      // Check if any subcommand is unsuccessful
       const hasUnsuccessful = item.subCommands.some(
         (sub) => sub.status === "unsuccessful"
       );
-      // Update parent status based on children
       return {
         ...item,
         status: hasUnsuccessful ? "unsuccessful" : "success",
@@ -332,25 +326,20 @@ const UserHistory = () => {
     }));
   }, [userData]);
 
-  // Fix for automatic dropdown opening - using state control
-  // Modified to avoid auto-opening of dropdown elements
   const highlightRandomItem = useCallback(() => {
     if (!userData) return;
-    
+
     const randomParentIndex = Math.floor(
       Math.random() * userData.history.length
     );
     const randomParent = userData.history[randomParentIndex];
-  
-    // Your existing code
-    
+
     setTimeout(() => setHighlightedItem(null), 700);
   }, [userData]);
-  
-  // Setup the interval for highlighting
+
   useEffect(() => {
     if (!userData) return;
-  
+
     const interval = setInterval(highlightRandomItem, 5000);
     return () => clearInterval(interval);
   }, [userData, highlightRandomItem]);
@@ -408,7 +397,6 @@ const UserHistory = () => {
     }));
   };
 
-  // Get icon based on command name
   const getCommandIcon = (command) => {
     if (command.toLowerCase().includes("call"))
       return <PhoneIcon className="h-4 w-4 mr-2" />;
@@ -481,15 +469,153 @@ const UserHistory = () => {
               </Button>
             </PopoverTrigger>
             <PopoverContent className="bg-black/95 border-cyan-700 text-cyan-300 p-0 backdrop-blur-lg cyber-panel">
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={(date) => {
-                  setSelectedDate(date);
-                  setIsCalendarOpen(false);
-                }}
-                className="bg-transparent text-cyan-300"
-              />
+              // Replace the Calendar component with this expanded version:
+              <div className="bg-black/90 p-3 w-64">
+                {/* Month/Year selector */}
+                <div className="flex justify-between items-center mb-3">
+                  <button
+                    className="text-cyan-400 hover:text-cyan-300 bg-black/50 border border-cyan-900/50 px-2 py-1 cyber-glitch"
+                    onClick={() => {
+                      const newDate = new Date(selectedDate || new Date());
+                      newDate.setMonth(newDate.getMonth() - 1);
+                      setSelectedDate(newDate);
+                    }}
+                  >
+                    &lt;
+                  </button>
+
+                  <div className="flex gap-2">
+                    <select
+                      className="bg-black border border-cyan-700 text-cyan-300 p-1 rounded-none cyber-panel text-xs"
+                      value={
+                        selectedDate
+                          ? selectedDate.getMonth()
+                          : new Date().getMonth()
+                      }
+                      onChange={(e) => {
+                        const newDate = new Date(selectedDate || new Date());
+                        newDate.setMonth(parseInt(e.target.value));
+                        setSelectedDate(newDate);
+                      }}
+                    >
+                      {[
+                        "Jan",
+                        "Feb",
+                        "Mar",
+                        "Apr",
+                        "May",
+                        "Jun",
+                        "Jul",
+                        "Aug",
+                        "Sep",
+                        "Oct",
+                        "Nov",
+                        "Dec",
+                      ].map((month, i) => (
+                        <option key={i} value={i}>
+                          {month}
+                        </option>
+                      ))}
+                    </select>
+
+                    <select
+                      className="bg-black border border-cyan-700 text-cyan-300 p-1 rounded-none cyber-panel text-xs"
+                      value={
+                        selectedDate
+                          ? selectedDate.getFullYear()
+                          : new Date().getFullYear()
+                      }
+                      onChange={(e) => {
+                        const newDate = new Date(selectedDate || new Date());
+                        newDate.setFullYear(parseInt(e.target.value));
+                        setSelectedDate(newDate);
+                      }}
+                    >
+                      {[2024, 2025, 2026].map((year) => (
+                        <option key={year} value={year}>
+                          {year}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <button
+                    className="text-cyan-400 hover:text-cyan-300 bg-black/50 border border-cyan-900/50 px-2 py-1 cyber-glitch"
+                    onClick={() => {
+                      const newDate = new Date(selectedDate || new Date());
+                      newDate.setMonth(newDate.getMonth() + 1);
+                      setSelectedDate(newDate);
+                    }}
+                  >
+                    &gt;
+                  </button>
+                </div>
+
+                {/* Weekday headers */}
+                <div className="grid grid-cols-7 gap-1 mb-1">
+                  {["S", "M", "T", "W", "T", "F", "S"].map((day, i) => (
+                    <div
+                      key={i}
+                      className="text-center text-cyan-400 text-xs font-mono"
+                    >
+                      {day}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Day grid - this generates the correct days for the selected month */}
+                <div className="grid grid-cols-7 gap-1">
+                  {(() => {
+                    const currentDate = selectedDate || new Date();
+                    const year = currentDate.getFullYear();
+                    const month = currentDate.getMonth();
+
+                    // First day of the month
+                    const firstDay = new Date(year, month, 1);
+                    // Last day of the month
+                    const lastDay = new Date(year, month + 1, 0);
+
+                    const days = [];
+
+                    // Add empty cells for days before the 1st of the month
+                    for (let i = 0; i < firstDay.getDay(); i++) {
+                      days.push(
+                        <div key={`empty-${i}`} className="h-7 w-7"></div>
+                      );
+                    }
+
+                    // Add cells for each day of the month
+                    for (let i = 1; i <= lastDay.getDate(); i++) {
+                      const dayDate = new Date(year, month, i);
+                      const isSelected =
+                        selectedDate &&
+                        dayDate.getDate() === selectedDate.getDate() &&
+                        dayDate.getMonth() === selectedDate.getMonth() &&
+                        dayDate.getFullYear() === selectedDate.getFullYear();
+
+                      days.push(
+                        <button
+                          key={i}
+                          className={`h-7 w-7 text-center text-xs font-mono hover:bg-cyan-900/50 border ${
+                            isSelected
+                              ? "border-cyan-400 bg-cyan-900/30 text-cyan-300"
+                              : "border-cyan-900/30 text-cyan-500"
+                          } cyber-glitch`}
+                          onClick={() => {
+                            const newDate = new Date(year, month, i);
+                            setSelectedDate(newDate);
+                            setIsCalendarOpen(false);
+                          }}
+                        >
+                          {i}
+                        </button>
+                      );
+                    }
+
+                    return days;
+                  })()}
+                </div>
+              </div>
             </PopoverContent>
           </Popover>
 

@@ -3,6 +3,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import * as THREE from "three";
+import { gsap } from "gsap";
+import { motion } from "framer-motion";
+import { useInView } from "framer-motion";
 
 const PhantomVoiceInterface = () => {
   const [command, setCommand] = useState("");
@@ -342,23 +345,113 @@ const PhantomVoiceInterface = () => {
   };
 
   const GlitchText = ({ text, className }) => {
+    const containerRef = useRef(null);
+
+    useEffect(() => {
+      if (!containerRef.current) return;
+
+      const tl = gsap.timeline();
+
+      tl.fromTo(
+        containerRef.current.querySelectorAll(".gsap-letter"),
+        {
+          opacity: 0,
+          y: (i) => Math.random() * 200 - 100,
+          x: (i) => Math.random() * 100 - 50,
+          scale: () => Math.random() * 3,
+          rotationX: () => Math.random() * 360,
+          rotationY: () => Math.random() * 360,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          x: 0,
+          scale: 1,
+          rotationX: 0,
+          rotationY: 0,
+          stagger: {
+            each: 0.05,
+            from: "random",
+          },
+          ease: "power3.out",
+          duration: 0.7,
+        }
+      );
+
+      const letters = containerRef.current.querySelectorAll(".gsap-letter");
+
+      letters.forEach((letter, index) => {
+        const glitchInterval = setInterval(() => {
+          if (Math.random() > 0.7) {
+            gsap.to(letter, {
+              x: Math.random() * 10 - 5,
+              y: Math.random() * 10 - 5,
+              skewX: Math.random() * 20 - 10,
+              color: Math.random() > 0.5 ? "#00ffff" : "#ff00ff",
+              textShadow: `0 0 ${Math.random() * 10 + 5}px ${
+                Math.random() > 0.5
+                  ? "rgba(0,255,255,0.8)"
+                  : "rgba(255,0,255,0.8)"
+              }`,
+              duration: 0.1,
+              ease: "power4.inOut",
+              onComplete: () => {
+                gsap.to(letter, {
+                  x: 0,
+                  y: 0,
+                  skewX: 0,
+                  color: "#00ffff",
+                  textShadow:
+                    "0 0 10px rgba(0,255,255,0.8), 0 0 20px rgba(0,255,255,0.4)",
+                  duration: 0.2,
+                  ease: "power4.out",
+                });
+              },
+            });
+          }
+        }, 1000 + index * 100);
+
+        return () => clearInterval(glitchInterval);
+      });
+
+      tl.fromTo(
+        ".subtitle",
+        {
+          opacity: 0,
+          y: 20,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+        },
+        "-=0.3"
+      );
+
+      return () => {
+        tl.kill();
+      };
+    }, []);
+
     return (
-      <div className={`relative ${className}`}>
-        <span
-          className="absolute top-0 left-0 text-pink-500 animate-pulse opacity-70"
-          style={{ clipPath: "polygon(0 0, 100% 0, 100% 45%, 0 45%)" }}
-        >
-          {text}
-        </span>
-        <span
-          className="absolute top-0 left-0 text-cyan-400 animate-pulse opacity-70"
-          style={{ clipPath: "polygon(0 45%, 100% 45%, 100% 100%, 0 100%)" }}
-        >
-          {text}
-        </span>
-        <span className="relative z-10 text-white mix-blend-screen">
-          {text}
-        </span>
+      <div ref={containerRef} className={`relative ${className}`}>
+        <div className="relative z-20 flex justify-center">
+          {text.split("").map((char, index) => (
+            <motion.span
+              key={index}
+              className="gsap-letter relative inline-block"
+              initial={{ color: "#ffffff" }}
+              animate={{
+                color: "#00ffff",
+                textShadow:
+                  "0 0 10px rgba(0,255,255,0.8), 0 0 20px rgba(0,255,255,0.4)",
+              }}
+              transition={{ delay: 0.8 + index * 0.04 }}
+            >
+              {char === " " ? "\u00A0" : char}
+            </motion.span>
+          ))}
+        </div>
       </div>
     );
   };
@@ -390,18 +483,46 @@ const PhantomVoiceInterface = () => {
       </div>
 
       <div className="relative z-20 h-full flex flex-col items-center justify-center max-w-6xl mx-auto px-6">
-        {/* Header */}
         <div className="text-center mb-12">
           <GlitchText
             text="PHANTOM LINK"
             className="text-6xl lg:text-8xl font-black tracking-widest"
           />
-          <div className="text-sm lg:text-lg font-mono text-cyan-400 mt-2 uppercase tracking-widest">
+          <motion.div
+            className="subtitle text-sm lg:text-lg font-mono text-cyan-400 mt-2 uppercase tracking-widest"
+            initial={{ opacity: 0 }}
+            animate={{
+              opacity: [0.6, 1, 0.6],
+              textShadow: [
+                "0 0 5px rgba(0,255,255,0.5)",
+                "0 0 15px rgba(0,255,255,0.8)",
+                "0 0 5px rgba(0,255,255,0.5)",
+              ],
+              x: [0, 1, -1, 2, -2, 0],
+            }}
+            transition={{
+              opacity: {
+                duration: 2,
+                repeat: Infinity,
+                repeatType: "reverse",
+              },
+              textShadow: {
+                duration: 2,
+                repeat: Infinity,
+                repeatType: "reverse",
+              },
+              x: {
+                duration: 0.5,
+                repeat: Infinity,
+                repeatType: "reverse",
+              },
+            }}
+          >
             Neural Interface v2.7.7
-          </div>
+          </motion.div>
         </div>
 
-        <div className="w-full max-w-4xl bg-gray-900/40 backdrop-blur-sm border border-cyan-500/50 rounded-md p-6 shadow-lg shadow-cyan-900/30">
+        <div className="w-full max-w-4xl bg-gray-900/65 backdrop-blur-sm border border-cyan-500/50 rounded-md p-6 shadow-lg shadow-cyan-900/30">
           <div className="flex flex-col space-y-2">
             <div className="text-xs font-mono text-pink-500 uppercase tracking-wider mb-1">
               NEURAL COMMAND INPUT
@@ -414,7 +535,7 @@ const PhantomVoiceInterface = () => {
                   value={command}
                   onChange={(e) => setCommand(e.target.value)}
                   placeholder="Speak or type your command..."
-                  className="bg-black/50 text-cyan-300 border-none focus:ring-1 focus:ring-pink-500/50 h-12 font-mono"
+                  className="bg-black/70 text-cyan-300 border-none focus:ring-1 focus:ring-pink-500/50 h-12 font-mono"
                   onKeyPress={(e) => e.key === "Enter" && sendCommand()}
                 />
               </div>
