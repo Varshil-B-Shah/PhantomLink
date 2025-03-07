@@ -1,39 +1,89 @@
-// components/Sidebar.jsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, createContext, useContext } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight, BarChart2, Database, Terminal } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
-const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(true);
+// Helper function for class names conditionally joining
+const cn = (...classes) => {
+  return classes.filter(Boolean).join(' ');
+};
+
+// Create SidebarContext
+const SidebarContext = createContext({
+  isCollapsed: false,
+  toggleSidebar: () => {},
+});
+
+// Context Provider component
+export function SidebarProvider({ children }) {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedValue = localStorage.getItem('sidebarCollapsed');
+      if (storedValue !== null) {
+        setIsCollapsed(storedValue === 'true');
+      }
+    }
+  }, []);
+
+  const toggleSidebar = () => {
+    setIsCollapsed(prev => {
+      const newValue = !prev;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('sidebarCollapsed', String(newValue));
+      }
+      return newValue;
+    });
+  };
+
+  return (
+    <SidebarContext.Provider value={{ isCollapsed, toggleSidebar }}>
+      {children}
+    </SidebarContext.Provider>
+  );
+}
+
+// Hook to use the sidebar context
+export function useSidebar() {
+  return useContext(SidebarContext);
+}
+
+// Main Sidebar Component
+const Sidebar = ({ children }) => {
+  return (
+    <SidebarProvider>
+      <SidebarContent />
+      <main className={`transition-all duration-500 ${useSidebar().isCollapsed ? 'ml-0' : 'ml-0 md:ml-64'}`}>
+        {children}
+      </main>
+    </SidebarProvider>
+  );
+};
+
+// Sidebar Content Component
+const SidebarContent = () => {
+  const { isCollapsed, toggleSidebar } = useSidebar();
   const [shouldRender, setShouldRender] = useState(false);
   const pathname = usePathname();
   
   useEffect(() => {
-    // Don't render sidebar on home page
     setShouldRender(pathname !== '/');
   }, [pathname]);
 
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
-  };
-
   if (!shouldRender) return null;
 
-  // Navigation links data
   const navLinks = [
-      { href: '/command', label: 'Command', icon: <Terminal size={20} /> },
-      { href: '/user_data', label: 'User Data', icon: <Database size={20} /> },
-      { href: '/metrics', label: 'Metrics', icon: <BarChart2 size={20} /> },
+    { href: '/command', label: 'Command', icon: <Terminal size={20} /> },
+    { href: '/user_data', label: 'User Data', icon: <Database size={20} /> },
+    { href: '/metrics', label: 'Metrics', icon: <BarChart2 size={20} /> },
   ];
 
   return (
     <>
-      {/* Sidebar Toggle Button - visible when sidebar is collapsed */}
-      {!isOpen && (
+      {isCollapsed && (
         <button
           onClick={toggleSidebar}
           className="fixed top-6 left-6 z-50 p-2 overflow-hidden rounded-full bg-black/30 backdrop-blur-md text-cyan-400 hover:text-cyan-300 transition-all duration-300"
@@ -41,11 +91,11 @@ const Sidebar = () => {
           <ChevronRight size={24} />
         </button>
       )}
-
+      
       {shouldRender && (
         <div
           style={{
-            transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
+            transform: isCollapsed ? 'translateX(-100%)' : 'translateX(0)',
             transition: 'transform 0.5s cubic-bezier(0.17, 0.67, 0.83, 0.67)'
           }}
           className={cn(
@@ -67,8 +117,7 @@ const Sidebar = () => {
               <ChevronLeft size={20} />
             </button>
           </div>
-
-          {/* Navigation Links */}
+          
           <div className="space-y-2">
             {navLinks.map((link) => (
               <Link
@@ -78,8 +127,8 @@ const Sidebar = () => {
                   "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300",
                   "hover:bg-white/10 group",
                   pathname === link.href 
-                    ? "bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border-l-2 border-cyan-400" 
-                    : "opacity-80 hover:opacity-100"
+                     ? "bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border-l-2 border-cyan-400"
+                     : "opacity-80 hover:opacity-100"
                 )}
               >
                 <span className="text-cyan-400 group-hover:text-cyan-300">
@@ -89,8 +138,7 @@ const Sidebar = () => {
               </Link>
             ))}
           </div>
-
-          {/* Decorative glowing element */}
+          
           <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute -top-20 -right-20 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
         </div>

@@ -267,8 +267,10 @@ useEffect(() => {
                   </span>
                 </div>
                 <div className="flex justify-between text-xs text-gray-400">
-                  <span>Minor Faults: {metricsData["CPU Metrics"]["CPU Usage"].Details.Processes["1309/system_server"]["Faults"].Minor}</span>
-                  <span>Major Faults: {metricsData["CPU Metrics"]["CPU Usage"].Details.Processes["1309/system_server"]["Faults"].Major}</span>
+                  {/* <span>Minor Faults: {metricsData["CPU Metrics"]["CPU Usage"].Details.Processes["1309/system_server"]["Faults"].Minor}</span>
+                  <span>Major Faults: {metricsData["CPU Metrics"]["CPU Usage"].Details.Processes["1309/system_server"]["Faults"].Major}</span> */}
+                  <span>Minor Faults: {data.Faults.Minor}</span>
+                  <span>Major Faults: {data.Faults.Major}</span>
                 </div>
               </div>
             ))}
