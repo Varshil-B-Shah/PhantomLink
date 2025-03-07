@@ -1,5 +1,4 @@
 "use client";
-import { data } from "autoprefixer";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import * as THREE from "three";
@@ -148,27 +147,27 @@ const Metrics = () => {
     };
   }, [isClient]);
 
-useEffect(() => {
-  const fetchMetrics = async () => {
-    try {
-      const response = await fetch("/api/metrics");
-      if (!response.ok) {
-        throw new Error(`HTTP Error: ${response.status}`);
+  useEffect(() => {
+    const fetchMetrics = async () => {
+      try {
+        const response = await fetch("/api/metrics");
+        if (!response.ok) {
+          throw new Error(`HTTP Error: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log("Metrics data from Next.js API route:", data);
+        setMetricsData(data);
+      } catch (error) {
+        console.error("Error fetching metrics:", error);
       }
-      const data = await response.json();
-      console.log("Metrics data from Next.js API route:", data);
-      setMetricsData(data)
-    } catch (error) {
-      console.error("Error fetching metrics:", error);
-    }
-  };
+    };
 
-  fetchMetrics();
-}, []);
+    fetchMetrics();
+  }, []);
 
   useEffect(() => {
     console.log("Updated metricsData state:", metricsData);
-  }, []); 
+  }, []);
 
   useEffect(() => {
     setIsClient(true);
@@ -267,10 +266,24 @@ useEffect(() => {
                   </span>
                 </div>
                 <div className="flex justify-between text-xs text-gray-400">
-                  {/* <span>Minor Faults: {metricsData["CPU Metrics"]["CPU Usage"].Details.Processes["1309/system_server"]["Faults"].Minor}</span>
-                  <span>Major Faults: {metricsData["CPU Metrics"]["CPU Usage"].Details.Processes["1309/system_server"]["Faults"].Major}</span> */}
-                  <span>Minor Faults: {data.Faults.Minor}</span>
-                  <span>Major Faults: {data.Faults.Major}</span>
+                  <span>
+                    Minor Faults:{" "}
+                    {
+                      metricsData["CPU Metrics"]["CPU Usage"].Details.Processes[
+                        "1309/system_server"
+                      ]["Faults"].Minor
+                    }
+                  </span>
+                  <span>
+                    Major Faults:{" "}
+                    {
+                      metricsData["CPU Metrics"]["CPU Usage"].Details.Processes[
+                        "1309/system_server"
+                      ]["Faults"].Major
+                    }
+                  </span>
+                  {/* <span>Minor Faults: {data.Faults.Minor}</span>
+                  <span>Major Faults: {data.Faults.Major}</span> */}
                 </div>
               </div>
             ))}

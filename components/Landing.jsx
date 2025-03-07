@@ -11,7 +11,7 @@ function CyberSphere() {
   const meshRef = useRef();
 
   const points = useMemo(() => {
-    const count = 2000; 
+    const count = 2000;
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
 
@@ -19,7 +19,7 @@ function CyberSphere() {
       const phi = Math.random() * Math.PI * 2;
       const costheta = Math.random() * 2 - 1;
       const theta = Math.acos(costheta);
-      const r = 4; 
+      const r = 4;
 
       const x = r * Math.sin(theta) * Math.cos(phi);
       const y = r * Math.sin(theta) * Math.sin(phi);
@@ -29,9 +29,9 @@ function CyberSphere() {
       positions[i * 3 + 1] = y;
       positions[i * 3 + 2] = z;
 
-      colors[i * 3] = 0; 
-      colors[i * 3 + 1] = 0; 
-      colors[i * 3 + 2] = 0.3; 
+      colors[i * 3] = 0;
+      colors[i * 3 + 1] = 0;
+      colors[i * 3 + 2] = 0.3;
     }
 
     return { positions, colors };
@@ -61,7 +61,7 @@ function CyberSphere() {
         />
       </bufferGeometry>
       <pointsMaterial
-        size={0.03} 
+        size={0.03}
         vertexColors
         blending={THREE.AdditiveBlending}
         transparent={true}
@@ -78,12 +78,16 @@ function RobotModel() {
 }
 
 export default function Landing() {
-  const [cameraPosition, setCameraPosition] = useState({ x: -0.5, y: 0.5, z: 5 });
+  const [cameraPosition, setCameraPosition] = useState({
+    x: -0.5,
+    y: 0.5,
+    z: 5,
+  });
   const orbitControlsRef = useRef(null);
   const lastCameraPosition = useRef(new THREE.Vector3(-0.5, 0.5, 5));
   const lastInteractionTime = useRef(Date.now());
 
-  const RESET_TIMEOUT = 1000; 
+  const RESET_TIMEOUT = 1000;
   const INITIAL_CAMERA_POSITION = { x: -0.5, y: 0.5, z: 5 };
 
   const smoothResetCamera = () => {
@@ -93,8 +97,8 @@ export default function Landing() {
 
       const startPosition = camera.position.clone();
       const targetPosition = new THREE.Vector3(
-        INITIAL_CAMERA_POSITION.x, 
-        INITIAL_CAMERA_POSITION.y, 
+        INITIAL_CAMERA_POSITION.x,
+        INITIAL_CAMERA_POSITION.y,
         INITIAL_CAMERA_POSITION.z
       );
 
@@ -107,8 +111,12 @@ export default function Landing() {
         const progress = Math.min(elapsed / duration, 1);
 
         const easedProgress = 1 - Math.pow(1 - progress, 3);
-        camera.position.lerpVectors(startPosition, targetPosition, easedProgress);
-        
+        camera.position.lerpVectors(
+          startPosition,
+          targetPosition,
+          easedProgress
+        );
+
         controls.update();
 
         if (progress < 1) {
@@ -117,8 +125,8 @@ export default function Landing() {
           setCameraPosition(INITIAL_CAMERA_POSITION);
           lastCameraPosition.current.copy(
             new THREE.Vector3(
-              INITIAL_CAMERA_POSITION.x, 
-              INITIAL_CAMERA_POSITION.y, 
+              INITIAL_CAMERA_POSITION.x,
+              INITIAL_CAMERA_POSITION.y,
               INITIAL_CAMERA_POSITION.z
             )
           );
@@ -139,7 +147,7 @@ export default function Landing() {
       setCameraPosition({
         x: currentPosition.x,
         y: currentPosition.y,
-        z: currentPosition.z
+        z: currentPosition.z,
       });
       lastCameraPosition.current.copy(currentPosition);
     }
@@ -161,9 +169,9 @@ export default function Landing() {
   return (
     <div className="w-screen h-screen bg-black overflow-hidden relative">
       <Canvas
-        camera={{ 
-          position: [cameraPosition.x, cameraPosition.y, cameraPosition.z], 
-          fov: 50 
+        camera={{
+          position: [cameraPosition.x, cameraPosition.y, cameraPosition.z],
+          fov: 50,
         }}
         gl={{
           antialias: true,

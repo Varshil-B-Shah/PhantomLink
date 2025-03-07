@@ -1,12 +1,15 @@
-// app/(dashboard)/layout.js
-import { PageTransition } from '@/components/PageTransition';
+"use client";
+
+import { useSidebar } from "@/components/Sidebar";
 
 export default function DashboardLayout({ children }) {
+  const { isCollapsed } = useSidebar();
+
   return (
-    <PageTransition>
-      <div className="ml-0 md:ml-64">
-        {children}
-      </div>
-    </PageTransition>
+    <div
+      className={`bg-black flex min-h-screen ${isCollapsed ? "ml-0" : "ml-64"}`}
+    >
+      {children}
+    </div>
   );
 }

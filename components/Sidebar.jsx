@@ -1,39 +1,42 @@
-'use client';
+"use client";
 
-import { useState, useEffect, createContext, useContext } from 'react';
-import { usePathname } from 'next/navigation';
-import Link from 'next/link';
-import { ChevronLeft, ChevronRight, BarChart2, Database, Terminal } from 'lucide-react';
+import { useState, useEffect, createContext, useContext } from "react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import {
+  ChevronLeft,
+  ChevronRight,
+  BarChart2,
+  Database,
+  Terminal,
+} from "lucide-react";
 
-// Helper function for class names conditionally joining
 const cn = (...classes) => {
-  return classes.filter(Boolean).join(' ');
+  return classes.filter(Boolean).join(" ");
 };
 
-// Create SidebarContext
 const SidebarContext = createContext({
   isCollapsed: false,
   toggleSidebar: () => {},
 });
 
-// Context Provider component
 export function SidebarProvider({ children }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  
+
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedValue = localStorage.getItem('sidebarCollapsed');
+    if (typeof window !== "undefined") {
+      const storedValue = localStorage.getItem("sidebarCollapsed");
       if (storedValue !== null) {
-        setIsCollapsed(storedValue === 'true');
+        setIsCollapsed(storedValue === "true");
       }
     }
   }, []);
 
   const toggleSidebar = () => {
-    setIsCollapsed(prev => {
+    setIsCollapsed((prev) => {
       const newValue = !prev;
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('sidebarCollapsed', String(newValue));
+      if (typeof window !== "undefined") {
+        localStorage.setItem("sidebarCollapsed", String(newValue));
       }
       return newValue;
     });
@@ -46,39 +49,40 @@ export function SidebarProvider({ children }) {
   );
 }
 
-// Hook to use the sidebar context
 export function useSidebar() {
   return useContext(SidebarContext);
 }
 
-// Main Sidebar Component
 const Sidebar = ({ children }) => {
   return (
     <SidebarProvider>
       <SidebarContent />
-      <main className={`transition-all duration-500 ${useSidebar().isCollapsed ? 'ml-0' : 'ml-0 md:ml-64'}`}>
+      <main
+        className={`transition-all duration-500 ${
+          useSidebar().isCollapsed ? "ml-0" : "ml-0 md:ml-64"
+        }`}
+      >
         {children}
       </main>
     </SidebarProvider>
   );
 };
 
-// Sidebar Content Component
 const SidebarContent = () => {
   const { isCollapsed, toggleSidebar } = useSidebar();
   const [shouldRender, setShouldRender] = useState(false);
   const pathname = usePathname();
-  
+
   useEffect(() => {
-    setShouldRender(pathname !== '/');
+    setShouldRender(pathname !== "/");
   }, [pathname]);
 
   if (!shouldRender) return null;
 
   const navLinks = [
-    { href: '/command', label: 'Command', icon: <Terminal size={20} /> },
-    { href: '/user_data', label: 'User Data', icon: <Database size={20} /> },
-    { href: '/metrics', label: 'Metrics', icon: <BarChart2 size={20} /> },
+    { href: "/com", label: "Command", icon: <Terminal size={20} /> },
+    { href: "/user_data", label: "User Data", icon: <Database size={20} /> },
+    { href: "/metrics", label: "Metrics", icon: <BarChart2 size={20} /> },
   ];
 
   return (
@@ -91,18 +95,18 @@ const SidebarContent = () => {
           <ChevronRight size={24} />
         </button>
       )}
-      
+
       {shouldRender && (
         <div
           style={{
-            transform: isCollapsed ? 'translateX(-100%)' : 'translateX(0)',
-            transition: 'transform 0.5s cubic-bezier(0.17, 0.67, 0.83, 0.67)'
+            transform: isCollapsed ? "translateX(-100%)" : "translateX(0)",
+            transition: "transform 0.5s cubic-bezier(0.17, 0.67, 0.83, 0.67)",
           }}
           className={cn(
             "fixed top-0 left-0 h-screen overflow-hidden bg-gradient-to-br from-black/70 via-blue-900/60 to-cyan-900/50",
             "backdrop-blur-lg border-r border-cyan-500/20 shadow-lg z-40",
             "flex flex-col w-64 text-white p-4",
-            "overflow-y-auto overflow-x-hidden"
+            "overflow-x-hidden",
           )}
         >
           {/* Sidebar Header with Toggle Button */}
@@ -117,7 +121,7 @@ const SidebarContent = () => {
               <ChevronLeft size={20} />
             </button>
           </div>
-          
+
           <div className="space-y-2">
             {navLinks.map((link) => (
               <Link
@@ -126,9 +130,9 @@ const SidebarContent = () => {
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300",
                   "hover:bg-white/10 group",
-                  pathname === link.href 
-                     ? "bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border-l-2 border-cyan-400"
-                     : "opacity-80 hover:opacity-100"
+                  pathname === link.href
+                    ? "bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border-l-2 border-cyan-400"
+                    : "opacity-80 hover:opacity-100"
                 )}
               >
                 <span className="text-cyan-400 group-hover:text-cyan-300">
@@ -138,7 +142,7 @@ const SidebarContent = () => {
               </Link>
             ))}
           </div>
-          
+
           <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute -top-20 -right-20 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
         </div>
