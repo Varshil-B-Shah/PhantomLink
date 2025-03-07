@@ -1,9 +1,10 @@
 "use client";
+import { data } from "autoprefixer";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import * as THREE from "three";
 
-const PhoneMetricsVisualization = () => {
+const Metrics = () => {
   const [isClient, setIsClient] = useState(false);
   const [activeComponent, setActiveComponent] = useState("CPU");
   const [metricsData, setMetricsData] = useState(null);
@@ -18,7 +19,7 @@ const PhoneMetricsVisualization = () => {
       cardHeight: 54,
       arrowStartX: 1250,
       arrowStartY: 40,
-      arrowEndX: 370, 
+      arrowEndX: 370,
       arrowEndY: 325,
     },
     GPU: {
@@ -31,7 +32,7 @@ const PhoneMetricsVisualization = () => {
       arrowStartX: 1050,
       arrowStartY: 500,
       arrowEndX: 380,
-      arrowEndY: 350, 
+      arrowEndY: 350,
     },
     BAT: {
       x: 54,
@@ -42,8 +43,8 @@ const PhoneMetricsVisualization = () => {
       cardHeight: 26,
       arrowStartX: 850,
       arrowStartY: 200,
-      arrowEndX: 350, 
-      arrowEndY: 410, 
+      arrowEndX: 350,
+      arrowEndY: 410,
     },
   });
 
@@ -63,7 +64,7 @@ const PhoneMetricsVisualization = () => {
       antialias: true,
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(0x000814, 1); 
+    renderer.setClearColor(0x000814, 1);
 
     const particleGeometry = new THREE.BufferGeometry();
     const particleCount = 1000;
@@ -147,83 +148,27 @@ const PhoneMetricsVisualization = () => {
     };
   }, [isClient]);
 
-  useEffect(() => {
-    const fetchMetrics = async () => {
-      try {
-        const response = await fetch("/metrics.json");
-        if (!response.ok) {
-          throw new Error("Failed to fetch metrics data");
-        }
-        const data = await response.json();
-        setMetricsData(data);
-      } catch (error) {
-        console.error("Error fetching metrics:", error);
-        setMetricsData({
-          "RAM Metrics": {
-            "Applications Memory Usage (in Kilobytes)": {},
-            Uptime: 336949303,
-            Realtime: 608776120,
-          },
-          "CPU Metrics": {
-            Load: [17.51, 17.19, 18.17],
-            "CPU Usage": {
-              From: "2025-03-05 21:00:08.152",
-              To: "2025-03-05 21:02:19.644",
-              Details: {
-                "Time Range": "200s",
-                Processes: {
-                  "1309/system_server": {
-                    User: "11%",
-                    Kernel: "9.4%",
-                    Faults: {
-                      Minor: 81473,
-                      Major: 3934,
-                    },
-                  },
-                  "1295/surfaceflinger": {
-                    User: "8.4%",
-                    Kernel: "7.4%",
-                    Faults: {
-                      Minor: 5420,
-                      Major: 103,
-                    },
-                  },
-                  "9951/samsung.hardware.media.c201.-0-service": {
-                    User: "9.6%",
-                    Kernel: "5.9%",
-                    Faults: {
-                      Minor: 9404,
-                      Major: 59,
-                    },
-                  },
-                },
-              },
-            },
-          },
-          "GPU Metrics": {
-            "Applications Graphics Acceleration Info": {},
-            Uptime: 336951589,
-            Realtime: 608778046,
-            "Graphics Info": {
-              PID: 2369,
-              App: "com.sec.android.app.launcher",
-            },
-          },
-          "Battery Metrics": {
-            "Current Battery Service State": {
-              "AC Powered": false,
-              "USB Powered": false,
-              "Wireless Powered": false,
-              "Dock Powered": false,
-            },
-          },
-        });
+useEffect(() => {
+  const fetchMetrics = async () => {
+    try {
+      const response = await fetch("/api/metrics");
+      if (!response.ok) {
+        throw new Error(`HTTP Error: ${response.status}`);
       }
-    };
+      const data = await response.json();
+      console.log("Metrics data from Next.js API route:", data);
+      setMetricsData(data)
+    } catch (error) {
+      console.error("Error fetching metrics:", error);
+    }
+  };
 
-    fetchMetrics();
-    setIsClient(true);
-  }, []);
+  fetchMetrics();
+}, []);
+
+  useEffect(() => {
+    console.log("Updated metricsData state:", metricsData);
+  }, []); 
 
   useEffect(() => {
     setIsClient(true);
@@ -234,10 +179,10 @@ const PhoneMetricsVisualization = () => {
       componentConfig[component];
 
     const midX1 = arrowStartX + (arrowEndX - arrowStartX) * 0.33;
-    const midY1 = arrowStartY - 60; 
+    const midY1 = arrowStartY - 60;
 
     const midX2 = arrowStartX + (arrowEndX - arrowStartX) * 0.66;
-    const midY2 = arrowStartY + 40; 
+    const midY2 = arrowStartY + 40;
 
     return `M ${arrowStartX} ${arrowStartY} 
             C ${midX1} ${midY1}, 
@@ -267,7 +212,7 @@ const PhoneMetricsVisualization = () => {
           top: `${cardY}vh`,
           width: `${cardWidth}vw`,
           height: `${cardHeight}vh`,
-          zIndex: 5, 
+          zIndex: 5,
         }}
         onClick={() => setActiveComponent(component)}
       >
@@ -322,8 +267,8 @@ const PhoneMetricsVisualization = () => {
                   </span>
                 </div>
                 <div className="flex justify-between text-xs text-gray-400">
-                  <span>Minor Faults: {data.Faults.Minor}</span>
-                  <span>Major Faults: {data.Faults.Major}</span>
+                  <span>Minor Faults: {metricsData["CPU Metrics"]["CPU Usage"].Details.Processes["1309/system_server"]["Faults"].Minor}</span>
+                  <span>Major Faults: {metricsData["CPU Metrics"]["CPU Usage"].Details.Processes["1309/system_server"]["Faults"].Major}</span>
                 </div>
               </div>
             ))}
@@ -332,7 +277,7 @@ const PhoneMetricsVisualization = () => {
               <div
                 className="bg-cyan-400 h-2 rounded-full"
                 style={{
-                  width: "45%", 
+                  width: "45%",
                 }}
               ></div>
             </div>
@@ -368,7 +313,7 @@ const PhoneMetricsVisualization = () => {
             <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
               <div
                 className="bg-cyan-400 h-2 rounded-full"
-                style={{ width: "42%" }} 
+                style={{ width: "42%" }}
               ></div>
             </div>
           </div>
@@ -465,7 +410,7 @@ const PhoneMetricsVisualization = () => {
             <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
               <div
                 className="bg-cyan-400 h-2 rounded-full"
-                style={{ width: "65%" }} 
+                style={{ width: "65%" }}
               ></div>
             </div>
           </div>
@@ -505,14 +450,14 @@ const PhoneMetricsVisualization = () => {
   };
 
   return (
-    <div className="max-h-screen bg-black overflow-hidden text-white p-4">
+    <div className="max-h-screen relative right-45 bg-black text-white">
       <canvas
         ref={canvasRef}
         className="fixed top-0 left-0 w-full h-full"
         style={{ zIndex: 0 }}
       />
 
-      <div className="relative w-full min-h-screen overflow-hidden">
+      <div className="relative w-full min-h-screen">
         {isClient && metricsData && (
           <>
             <div
@@ -546,8 +491,8 @@ const PhoneMetricsVisualization = () => {
                 top: 0,
                 width: "100%",
                 height: "100%",
-                zIndex: 10, 
-                pointerEvents: "none", 
+                zIndex: 10,
+                pointerEvents: "none",
               }}
             >
               <defs>
@@ -588,4 +533,4 @@ const PhoneMetricsVisualization = () => {
   );
 };
 
-export default PhoneMetricsVisualization;
+export default Metrics;
