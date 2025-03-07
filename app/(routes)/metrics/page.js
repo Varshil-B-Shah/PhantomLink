@@ -10,37 +10,37 @@ const Metrics = () => {
   const canvasRef = useRef(null);
   const [componentConfig, setComponentConfig] = useState({
     CPU: {
-      x: 81,
-      y: 2.5,
-      cardX: 72,
-      cardY: 3,
+      x: 79,
+      y: 6,
+      cardX: 70,
+      cardY: 10,
       cardWidth: 22,
       cardHeight: 54,
-      arrowStartX: 1250,
-      arrowStartY: 40,
+      arrowStartX: 1230,
+      arrowStartY: 100,
       arrowEndX: 370,
       arrowEndY: 325,
     },
     GPU: {
-      x: 68,
-      y: 32,
-      cardX: 59,
-      cardY: 65,
+      x: 62,
+      y: 32.5,
+      cardX: 53,
+      cardY: 66,
       cardWidth: 21,
       cardHeight: 26,
-      arrowStartX: 1050,
-      arrowStartY: 500,
+      arrowStartX: 955,
+      arrowStartY: 510,
       arrowEndX: 380,
       arrowEndY: 350,
     },
     BAT: {
-      x: 54,
+      x: 52,
       y: 12.5,
-      cardX: 45,
+      cardX: 43,
       cardY: 24,
       cardWidth: 24,
       cardHeight: 26,
-      arrowStartX: 850,
+      arrowStartX: 820,
       arrowStartY: 200,
       arrowEndX: 350,
       arrowEndY: 410,
@@ -150,7 +150,7 @@ const Metrics = () => {
   useEffect(() => {
     const fetchMetrics = async () => {
       try {
-        const response = await fetch("/api/metrics");
+        const response = await fetch("/metrics.json");
         if (!response.ok) {
           throw new Error(`HTTP Error: ${response.status}`);
         }
@@ -547,5 +547,5 @@ const Metrics = () => {
     </div>
   );
 };
-
+ 
 export default Metrics;

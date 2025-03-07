@@ -16,7 +16,7 @@ export async function POST(request) {
     }
 
     const response = await fetch(
-      "https://df34-203-192-202-84.ngrok-free.app/command",
+      "https://ac0a-103-51-136-138.ngrok-free.app/command",
       {
         method: "POST",
         headers: {

@@ -71,7 +71,7 @@ const UserHistory = () => {
   if (!userData) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="relative">
+        <div className="">
           <div className="absolute inset-0 bg-cyan-500 blur-xl opacity-20 animate-pulse"></div>
           <div className="flex flex-col items-center relative">
             <Terminal className="h-16 w-16 text-cyan-400 animate-pulse mb-4" />
@@ -134,7 +134,7 @@ const UserHistory = () => {
           <div className="absolute -left-4 -top-2 h-12 w-1 bg-cyan-500 animate-pulse"></div>
           <h1 className="text-4xl font-bold font-mono bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent relative">
             USER::HISTORY
-            <span className="absolute -top-2 right-0 text-xs text-cyan-500 font-mono animate-pulse">
+            <span className="absolute top-14 right-0 text-xs text-cyan-500 font-mono animate-pulse">
               [SYS.42]
             </span>
           </h1>
