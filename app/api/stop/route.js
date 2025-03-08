@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export async function GET(request) {
   try {
     const response = await fetch(
-      "https://564d-42-106-216-56.ngrok-free.app/sos"
+      "https://1d37-203-192-202-84.ngrok-free.app/stop"
     );
     if (!response.ok) {
       throw new Error(`External API error: ${response.status}`);

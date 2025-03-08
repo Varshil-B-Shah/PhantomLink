@@ -8,6 +8,10 @@ import { motion } from "framer-motion";
 import { doc, setDoc, arrayUnion } from "firebase/firestore";
 import { db } from "@/lib/firebaseConfig";
 import { useUser } from "@clerk/nextjs";
+import { useSos } from "@/components/context/SosContext";
+import { useRouter } from "next/navigation";
+import { useZerodha } from "@/components/context/ZerodhaContext";
+import { BellOff, BellRing } from "lucide-react";
 
 const PhantomVoiceInterface = () => {
   const [command, setCommand] = useState("");
@@ -20,6 +24,10 @@ const PhantomVoiceInterface = () => {
   const sceneRef = useRef(null);
   const recognitionRef = useRef(null);
   const { user, isLoaded } = useUser();
+  const { setSos } = useSos();
+  const router = useRouter();
+  const { setZerodha } = useZerodha();
+  const [start, setStart] = useState(false);
 
   useEffect(() => {
     if (!threeContainerRef.current) return;
@@ -327,12 +335,9 @@ const PhantomVoiceInterface = () => {
       const data = await response.json();
       console.log("Response:", data);
 
-      // Store command and response in Firestore
       try {
-        // Using Clerk user.id as the document ID
         const userDocRef = doc(db, "user_history", user.id);
 
-        // Using merge: true to update existing document or create if it doesn't exist
         await setDoc(
           userDocRef,
           {
@@ -359,26 +364,53 @@ const PhantomVoiceInterface = () => {
     }
   };
 
-  const sendSOS = () => {
-    const payload = {
-      command: "SOS",
-      timestamp: new Date().toISOString(),
-    };
+  const fetchSOS = async () => {
+    try {
+      const response = await fetch("/api/sos");
+      if (!response.ok) {
+        throw new Error(`HTTP Error: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log("SOS data from Next.js API route:", data);
+      setSos(data);
+      router.push("/location");
+    } catch (error) {
+      console.error("Error fetching sos:", error);
+    }
+  };
 
-    fetch("/api/sos", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("SOS Response:", data);
-      })
-      .catch((error) => {
-        console.error("Error sending SOS:", error);
-      });
+  const fetchZerodha = async () => {
+    try {
+      const response = await fetch("/api/zerodha");
+      if (!response.ok) {
+        throw new Error(`HTTP Error: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log("Zerodha data from Next.js API route:", data);
+      setZerodha(data);
+      router.push("/zerodha");
+    } catch (error) {
+      console.error("Error fetching zerodha:", error);
+    }
+  };
+
+  const fetchfmd = async () => {
+    try {
+      setStart((prevState) => !prevState);
+
+      const endpoint = !start ? "/api/start" : "/api/stop";
+
+      const response = await fetch(endpoint);
+      if (!response.ok) {
+        throw new Error(`HTTP Error: ${response.status}`);
+      }
+      console.log(`Successfully called ${endpoint}`);
+    } catch (error) {
+      console.error(
+        `Error fetching from ${!start ? "/api/start" : "/api/stop"}:`,
+        error
+      );
+    }
   };
 
   const clearCommand = () => {
@@ -635,22 +667,34 @@ const PhantomVoiceInterface = () => {
 
               <div className="flex space-x-2">
                 <Button
-                  onClick={sendSOS}
-                  className="bg-black border border-yellow-500 text-yellow-500 hover:text-white hover:bg-yellow-900/30 transition-colors font-mono uppercase tracking-wider px-4 text-xs h-8 animate-pulse"
+                  onClick={fetchfmd}
+                  className="bg-black border hover:cursor-pointer border-pink-600 text-pink-500 hover:text-white hover:bg-yellow-900/30 transition-colors font-mono uppercase tracking-wider px-4 text-xs h-8 animate-pulse"
+                >
+                  {start ? <BellRing /> : <BellOff />}
+                </Button>
+                <Button
+                  onClick={fetchZerodha}
+                  className="bg-black border hover:cursor-pointer border-orange-600 text-orange-500 hover:text-white hover:bg-yellow-900/30 transition-colors font-mono uppercase tracking-wider px-4 text-xs h-8 animate-pulse"
+                >
+                  Zerodha
+                </Button>
+                <Button
+                  onClick={fetchSOS}
+                  className="bg-black border hover:cursor-pointer border-yellow-500 text-yellow-500 hover:text-white hover:bg-yellow-900/30 transition-colors font-mono uppercase tracking-wider px-4 text-xs h-8 animate-pulse"
                 >
                   SOS
                 </Button>
 
                 <Button
                   onClick={clearCommand}
-                  className="bg-black border border-red-500 text-red-500 hover:text-white hover:bg-red-900/30 transition-colors font-mono uppercase tracking-wider px-4 text-xs h-8"
+                  className="bg-black border hover:cursor-pointer border-red-500 text-red-500 hover:text-white hover:bg-red-900/30 transition-colors font-mono uppercase tracking-wider px-4 text-xs h-8"
                 >
                   CLEAR
                 </Button>
 
                 <Button
                   onClick={sendCommand}
-                  className="bg-black border border-pink-500 text-pink-500 hover:text-white hover:bg-pink-900/30 transition-colors font-mono uppercase tracking-wider px-4 text-xs h-8"
+                  className="bg-black border hover:cursor-pointer border-pink-500 text-pink-500 hover:text-white hover:bg-pink-900/30 transition-colors font-mono uppercase tracking-wider px-4 text-xs h-8"
                   disabled={!command.trim()}
                 >
                   TRANSMIT

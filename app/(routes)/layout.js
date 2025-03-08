@@ -10,7 +10,11 @@ import {
   Users,
   ChevronLeft,
   ChevronRight,
+  LocateIcon,
+  DollarSign,
 } from "lucide-react";
+import { useSos } from "@/components/context/SosContext";
+import { useZerodha } from "@/components/context/ZerodhaContext";
 
 const SidebarContext = createContext();
 
@@ -23,6 +27,8 @@ export default function DashboardLayout({ children }) {
   const { user, isLoaded } = useUser();
   const router = useRouter();
   const pathname = usePathname();
+  const { sos } = useSos();
+  const {zerodha} = useZerodha();
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
@@ -38,7 +44,7 @@ export default function DashboardLayout({ children }) {
     return null;
   }
 
-  const menuItems = [
+  const baseMenuItems = [
     {
       path: "/com",
       name: "Command",
@@ -55,6 +61,27 @@ export default function DashboardLayout({ children }) {
       icon: <BarChart2 size={20} />,
     },
   ];
+  
+  // Conditionally add extra items
+  const conditionalMenuItems = [
+    ...(sos ? [
+      {
+        path: "/location",
+        name: "Location",
+        icon: <LocateIcon size={20} />,
+      },
+    ] : []),
+    ...(zerodha ? [
+      {
+        path: "/zerodha",
+        name: "Zerodha",
+        icon: <DollarSign size={20} />,
+      },
+    ] : []),
+  ];
+  
+  // Combine them into a single array
+  const menuItems = [...baseMenuItems, ...conditionalMenuItems];
 
   return (
     <SidebarContext.Provider value={{ isCollapsed, toggleSidebar }}>
