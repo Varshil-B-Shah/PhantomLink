@@ -8,38 +8,34 @@ const StockRecommendation = () => {
   
   const maxScore = 5;
   
-  // Parse Zerodha recommendations on component mount
   useEffect(() => {
     if (zerodha && zerodha.length > 0) {
       const parsedRecommendations = zerodha.map(item => {
-        // Example format: "BHEL: STRONG BUY"
         const parts = item.split(': ');
         const ticker = parts[0];
         const recommendation = parts[1];
         
-        // Generate dummy scores based on recommendation type
         let score;
         switch(recommendation) {
           case "STRONG BUY":
-            score = 4 + Math.random() * 0.9; // Range: 4.0-4.9
+            score = 4 + Math.random() * 0.9; 
             break;
           case "BUY":
-            score = 3 + Math.random() * 0.9; // Range: 3.0-3.9
+            score = 3 + Math.random() * 0.9; 
             break;
           case "NEUTRAL":
-            score = 2.1 + Math.random() * 0.8; // Range: 2.1-2.9
+            score = 2.1 + Math.random() * 0.8; 
             break;
           case "SELL":
-            score = 1.5 + Math.random() * 0.5; // Range: 1.5-2.0
+            score = 1.5 + Math.random() * 0.5; 
             break;
           case "STRONG SELL":
-            score = 1 + Math.random() * 0.4; // Range: 1.0-1.4
+            score = 1 + Math.random() * 0.4; 
             break;
           default:
-            score = 2.5; // Default neutral
+            score = 2.5; 
         }
         
-        // Generate dummy accuracy between 75% and 95%
         const accuracy = 75 + Math.random() * 20;
         
         return {
@@ -52,7 +48,6 @@ const StockRecommendation = () => {
       
       setRecommendations(parsedRecommendations);
     } else {
-      // Fallback if zerodha is empty
       setRecommendations([
         { ticker: "BHEL", recommendation: "STRONG BUY", score: 4.8, accuracy: 92 },
         { ticker: "GAIL", recommendation: "BUY", score: 3.7, accuracy: 86 },

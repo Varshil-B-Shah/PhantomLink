@@ -209,7 +209,7 @@ export default function UserHistoryPage() {
                 timestamp: timestamp,
                 subCommands: subCommands,
                 status: "success",
-                tool_name: item.tool_name || "Unknown Tool", 
+                tool_name: item.tool_name || "Unknown Tool",
               });
             });
           }
@@ -226,13 +226,13 @@ export default function UserHistoryPage() {
 
   const sendCommand = async (commandText) => {
     const commandToSend = commandText || command?.trim();
-    
+
     if (!commandToSend) return;
     if (!isLoaded || !user) {
       console.error("User not authenticated or still loading");
       return;
     }
-  
+
     const payload = {
       command: commandToSend,
       timestamp: new Date().toISOString(),
@@ -240,7 +240,7 @@ export default function UserHistoryPage() {
       email: user.emailAddresses?.[0].emailAddress || "no-email",
       username: user.username || user.firstName || "Unknown",
     };
-  
+
     try {
       const response = await fetch("/api/com", {
         method: "POST",
@@ -249,17 +249,17 @@ export default function UserHistoryPage() {
         },
         body: JSON.stringify(payload),
       });
-  
+
       if (!response.ok) {
         throw new Error("Failed to send command");
       }
-  
+
       const data = await response.json();
       console.log("Response:", data);
-  
+
       try {
         const userDocRef = doc(db, "user_history", user.id);
-  
+
         await setDoc(
           userDocRef,
           {
@@ -274,14 +274,10 @@ export default function UserHistoryPage() {
           },
           { merge: true }
         );
-  
+
         console.log("Command history saved to Firestore");
       } catch (firestoreError) {
         console.error("Error saving to Firestore:", firestoreError);
-      }
-  
-      if (!commandText) {
-        setCommand("");
       }
     } catch (error) {
       console.error("Error sending command:", error);
@@ -708,6 +704,32 @@ export default function UserHistoryPage() {
                     expandedCommands[item.id] ? "max-h-96" : "max-h-0"
                   }`}
                 >
+                  <div className="bg-black/70 border-t border-cyan-900/30 pl-8 pr-4 py-2">
+                    <div className="text-xs text-cyan-600 mb-2 font-mono">
+                      EXECUTION DETAILS:
+                    </div>
+                    <div className="space-y-2">
+                      {item.subCommands &&
+                        item.subCommands.map((subCmd) => (
+                          <div
+                            key={subCmd.id}
+                            className="flex items-center gap-2 text-sm"
+                          >
+                            {subCmd.status === "success" ? (
+                              <CheckCircleIcon className="h-4 w-4 text-emerald-500" />
+                            ) : (
+                              <XCircleIcon className="h-4 w-4 text-red-500" />
+                            )}
+                            <span className="font-mono text-cyan-400">
+                              {subCmd.command}
+                            </span>
+                            <span className="text-xs text-cyan-600 ml-auto font-mono">
+                              {new Date(subCmd.timestamp).toLocaleTimeString()}
+                            </span>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}

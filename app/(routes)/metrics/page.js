@@ -150,7 +150,7 @@ const Metrics = () => {
   useEffect(() => {
     const fetchMetrics = async () => {
       try {
-        const response = await fetch("/metrics.json");
+        const response = await fetch("/api/metrics");
         if (!response.ok) {
           throw new Error(`HTTP Error: ${response.status}`);
         }
@@ -270,7 +270,7 @@ const Metrics = () => {
                     Minor Faults:{" "}
                     {
                       metricsData["CPU Metrics"]["CPU Usage"].Details.Processes[
-                        "1309/system_server"
+                        "1564/system_server"
                       ]["Faults"].Minor
                     }
                   </span>
@@ -278,7 +278,7 @@ const Metrics = () => {
                     Major Faults:{" "}
                     {
                       metricsData["CPU Metrics"]["CPU Usage"].Details.Processes[
-                        "1309/system_server"
+                        "1564/system_server"
                       ]["Faults"].Major
                     }
                   </span>
@@ -425,7 +425,7 @@ const Metrics = () => {
             <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
               <div
                 className="bg-cyan-400 h-2 rounded-full"
-                style={{ width: "65%" }}
+                style={{ width: "100%" }}
               ></div>
             </div>
           </div>
