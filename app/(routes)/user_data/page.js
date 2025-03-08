@@ -306,7 +306,7 @@ export default function UserHistoryPage() {
 
     const interval = setInterval(highlightRandomItem, 5000);
     return () => clearInterval(interval);
-  }, [historyData]);
+  }, [historyData,highlightRandomItem]);
 
   if (!isLoaded) {
     return (
