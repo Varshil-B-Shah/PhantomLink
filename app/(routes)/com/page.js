@@ -34,6 +34,7 @@ const PhantomVoiceInterface = () => {
 
   useEffect(() => {
     if (!threeContainerRef.current) return;
+    const container = threeContainerRef.current;
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
@@ -183,8 +184,8 @@ const PhantomVoiceInterface = () => {
 
     return () => {
       window.removeEventListener("resize", handleResize);
-      if (threeContainerRef.current && renderer.domElement) {
-        threeContainerRef.current.removeChild(renderer.domElement);
+      if (container && renderer.domElement) {
+        container.removeChild(renderer.domElement);
       }
       renderer.dispose();
     };

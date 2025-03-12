@@ -284,29 +284,29 @@ export default function UserHistoryPage() {
     }
   };
 
-  const highlightRandomItem = () => {
-    if (
-      !historyData ||
-      !historyData.history ||
-      historyData.history.length === 0
-    )
-      return;
-
-    const randomParentIndex = Math.floor(
-      Math.random() * historyData.history.length
-    );
-    const randomParent = historyData.history[randomParentIndex];
-    setHighlightedItem(randomParent.id);
-
-    setTimeout(() => setHighlightedItem(null), 700);
-  };
-
   useEffect(() => {
     if (!historyData) return;
-
+  
+    const highlightRandomItem = () => {
+      if (
+        !historyData ||
+        !historyData.history ||
+        historyData.history.length === 0
+      )
+        return;
+  
+      const randomParentIndex = Math.floor(
+        Math.random() * historyData.history.length
+      );
+      const randomParent = historyData.history[randomParentIndex];
+      setHighlightedItem(randomParent.id);
+  
+      setTimeout(() => setHighlightedItem(null), 700);
+    };
+  
     const interval = setInterval(highlightRandomItem, 5000);
     return () => clearInterval(interval);
-  }, [historyData,highlightRandomItem]);
+  }, [historyData]);
 
   if (!isLoaded) {
     return (

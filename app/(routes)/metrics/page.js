@@ -163,11 +163,8 @@ const Metrics = () => {
     };
 
     fetchMetrics();
-  }, [metricsData]);
-
-  useEffect(() => {
-    console.log("Updated metricsData state:", metricsData);
   }, []);
+
 
   useEffect(() => {
     setIsClient(true);
