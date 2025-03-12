@@ -71,34 +71,8 @@ function CyberSphere() {
   );
 }
 
-// Priority loading for the robot model
 function RobotModel() {
-  // Use a priority loading mechanism for GLB
-  const gltf = useLoader(GLTFLoader, "/untitled1.glb", (loader) => {
-    // Set high loading priority
-    loader.setCrossOrigin('anonymous');
-    
-    // Optional: You can add a loading manager with onProgress callback
-    const loadingManager = new THREE.LoadingManager();
-    loader.manager = loadingManager;
-  });
-
-  useEffect(() => {
-    if (gltf) {
-      // Optimize the model once loaded
-      gltf.scene.traverse((child) => {
-        if (child.isMesh) {
-          // Apply optimizations to meshes
-          child.frustumCulled = false; // Ensure model is always rendered
-          
-          // Optional: If needed, optimize materials
-          if (child.material) {
-            child.material.needsUpdate = true;
-          }
-        }
-      });
-    }
-  }, [gltf]);
+  const gltf = useLoader(GLTFLoader, "/untitled1.glb");
 
   return <primitive object={gltf.scene} scale={1} position={[-1, -1, 0]} />;
 }
@@ -203,33 +177,15 @@ export default function Landing() {
           antialias: true,
           alpha: true,
           clearColor: 0x000000,
-          // Set priority rendering options
-          powerPreference: "high-performance",
         }}
-        // Set high pixel ratio but cap it to avoid performance issues
-        dpr={Math.min(2, window.devicePixelRatio)}
       >
         <color attach="background" args={["black"]} />
-        
-        {/* Put the robot model first (out of Suspense) to prioritize its loading */}
-        <RobotModel />
-        
-        {/* Lights optimized to highlight the model */}
+        <CyberSphere />
         <ambientLight intensity={2} />
         <directionalLight position={[5, 5, 5]} intensity={1} />
-        <spotLight 
-          position={[0, 3, 0]} 
-          intensity={1.5} 
-          angle={0.6} 
-          penumbra={0.5} 
-          castShadow 
-        />
-        
-        {/* Put the background sphere in Suspense as lower priority */}
         <Suspense fallback={null}>
-          <CyberSphere />
+          <RobotModel />
         </Suspense>
-        
         <OrbitControls
           ref={orbitControlsRef}
           enableZoom={false}
