@@ -150,7 +150,7 @@ const Metrics = () => {
   useEffect(() => {
     const fetchMetrics = async () => {
       try {
-        const response = await fetch("/metrics.json");
+        const response = await fetch("/api/metrics");
         if (!response.ok) {
           throw new Error(`HTTP Error: ${response.status}`);
         }
